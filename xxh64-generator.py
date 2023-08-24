@@ -1,6 +1,6 @@
 import os
 import xxhash
-from tqdm import tqdm  # Import tqdm for the progress bar
+from tqdm import tqdm
 
 def generate_checksums(directory):
     checksums = {}
