@@ -27,13 +27,20 @@ if __name__ == "__main__":
     checksums_a = generate_checksums(directory_a)
     checksums_b = generate_checksums(directory_b)
     
-    # Combine checksums and write to a JSON file
-    combined_checksums = {
-        "checksums_a": checksums_a,
-        "checksums_b": checksums_b
-    }
-    json_file_path = os.path.join(directory_b, "checksums.json")
-    with open(json_file_path, "w") as json_file:
-        json.dump(combined_checksums, json_file, indent=4)
+    # Compare checksums and save the failed ones to a JSON file
+    failed_checksums = {}
+    for file_path, checksum in checksums_a.items():
+        if file_path in checksums_b and checksums_b[file_path] != checksum:
+            failed_checksums[file_path] = {
+                "checksum_a": checksum,
+                "checksum_b": checksums_b[file_path]
+            }
     
-    print("Checksums saved to:", json_file_path)
+    json_file_path = os.path.join(directory_b, "failed_checksums.json")
+    with open(json_file_path, "w") as json_file:
+        json.dump(failed_checksums, json_file, indent=4)
+    
+    if not failed_checksums:
+        print("Checksum check was successful. All files match.")
+    else:
+        print("Checksum check was not successful. Failed checksums saved to:", json_file_path)
